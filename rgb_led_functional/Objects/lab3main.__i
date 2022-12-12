@@ -1,0 +1,6 @@
+--c99 --gnu -c --cpu Cortex-M4.fp.sp -D__EVAL -g -O0 --apcs=interwork --split_sections
+-I.\RTE\_Target_1
+-I"E:\Users\Osman Alperen\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include"
+-I"E:\Users\Osman Alperen\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123"
+-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM
+-o .\objects\lab3main.o --omf_browse .\objects\lab3main.crf --depend .\objects\lab3main.d "Lab3Main.c"
