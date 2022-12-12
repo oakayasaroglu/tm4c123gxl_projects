@@ -1,0 +1,283 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000 400243FC 
+                       GPIO_PORTE_DATA_R
+                               EQU              0x400243FC
+    2 00000000 40024400 
+                       GPIO_PORTE_DIR_R
+                               EQU              0x40024400
+    3 00000000 4002451C 
+                       GPIO_PORTE_DEN_R
+                               EQU              0x4002451C
+    4 00000000 400FE608 
+                       SYSCTL_RCGCGPIO_R
+                               EQU              0x400FE608
+    5 00000000         
+    6 00000000 40024004 
+                       GPIO_PE0
+                               EQU              0x40024004  ; SW1 INPUT'S POINT
+                                                            ER
+    7 00000000 40024008 
+                       GPIO_PE1
+                               EQU              0x40024008  ; SW2 INPUT'S POINT
+                                                            ER
+    8 00000000 40024010 
+                       GPIO_PE2
+                               EQU              0x40024010  ; SW3 INPUT'S POINT
+                                                            ER
+    9 00000000 40024020 
+                       GPIO_PE3
+                               EQU              0x40024020  ; LED OUTPUT'S POIN
+                                                            TER
+   10 00000000         
+   11 00000000                 THUMB
+   12 00000000                 AREA             DATA, ALIGN=2
+   13 00000000         
+   14 00000000                 ALIGN
+   15 00000000                 AREA             |.text|, CODE, READONLY, ALIGN=
+2
+   16 00000000                 EXPORT           Start
+   17 00000000         
+   18 00000000         GPIO_Init
+   19 00000000         
+   20 00000000 4916            LDR              R1, =SYSCTL_RCGCGPIO_R ; SELECT
+                                                             CLOCK SETTING'S RE
+                                                            GISTER
+   21 00000002 6808            LDR              R0, [R1]
+   22 00000004 F040 0010       ORR              R0, R0, #0x10 ; ENABLE CLOCK FO
+                                                            R PORT E 0x10=#0001
+                                                            0000-->XXFEDCBA
+   23 00000008 6008            STR              R0, [R1]    ; STORE TO ADRESS
+   24 0000000A BF00            NOP                          ; GIVE 
+   25 0000000C BF00            NOP                          ; SOME 
+   26 0000000E BF00            NOP                          ; TIME
+   27 00000010 BF00            NOP                          ; TO MCU
+   28 00000012         
+   29 00000012 4913            LDR              R1, =GPIO_PORTE_DIR_R ; SELECT 
+                                                            I or O -DIRECTION R
+                                                            EGISTER- FOR PORT E
+                                                            
+   30 00000014 6808            LDR              R0, [R1]
+   31 00000016 F040 0008       ORR              R0, R0, #0x8 ; 1 , 0 , 0 , 0 --
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                                                            -> PE3=OUTPUT , PE2
+                                                            =INPUT , PE1=INPUT 
+                                                            , PE0=INPUT
+   32 0000001A 6008            STR              R0, [R1]    ; STORE TO ADRESS
+   33 0000001C         
+   34 0000001C 4911            LDR              R1, =GPIO_PORTE_DEN_R ; SELECT 
+                                                            DIGITAL ENABLER REG
+                                                            ISTER FOR PORT E
+   35 0000001E 6808            LDR              R0, [R1]
+   36 00000020 F040 000F       ORR              R0, R0, #0xF ; 1 , 1 , 1 , 1 --
+                                                            -> PE3=DIGITAL ENAB
+                                                            LE , PE2=DIGITAL EN
+                                                            ABLE , PE1=DIGITAL 
+                                                            ENABLE , PE0=DIGITA
+                                                            L ENABLE , 
+   37 00000024 6008            STR              R0, [R1]    ; STORE TO ADRESS  
+                                                            
+   38 00000026         
+   39 00000026 4770            BX               LR          ; FINISH GPIO_Init
+   40 00000028         
+   41 00000028         Start
+   42 00000028 F7FF FFEA       BL               GPIO_Init   ; CALL GPIO INIT
+   43 0000002C 4D0E            LDR              R5,=GPIO_PE3 ; LOAD PE3'S ADRES
+                                                            S TO R5
+   44 0000002E 4E0F            LDR              R6,=GPIO_PE0 ; LOAD PE0'S ADRES
+                                                            S TO R6
+   45 00000030 4F0F            LDR              R7,=GPIO_PE1 ; LOAD PE1'S ADRES
+                                                            S TO R7
+   46 00000032 F8DF 8040       LDR              R8,=GPIO_PE2 ; LOAD PE2'S ADRES
+                                                            S TO R8
+   47 00000036         
+   48 00000036         loop                                 ; ENDLESS LOOP
+   49 00000036 6830            LDR              R0,[R6]     ; SELECT PE0
+   50 00000038 6839            LDR              R1,[R7]     ; SELECT PE1 TOO
+   51 0000003A EA4F 0151       MOV              R1,R1,LSR #1 ; AND SHIFT 1 BIT 
+                                                            RIGHT BECAUSE WE CA
+                                                            N EXECUTE LOGICAL O
+                                                            PERATIONS TRULY IF 
+                                                            THEY ARE ON THE SAM
+                                                            E DIGIT
+   52 0000003E F8D8 2000       LDR              R2,[R8]     ; SELECT PE2
+   53 00000042 EA4F 0292       MOV              R2,R2,LSR #2 ; AND SHIFT 2 BITS
+                                                             RIGHT 
+   54 00000046 EA80 0301       EOR              R3,R0,R1    ; R3 = R0 XOR R1
+   55 0000004A EA83 0302       EOR              R3,R3,R2    ; R3 = R3 XOR R2
+   56 0000004E F083 0301       EOR              R3,R3,#1    ; R3 = R3 XOR 1 ---
+                                                            > WE EXECUTED THIS 
+                                                            OPERATION BECAUSE O
+                                                            UR MAIN PURPOSE WAS
+                                                             EXECUTE "R3 = R3 X
+                                                            NOR R2" 
+   57 00000052 EA4F 03C3       MOV              R3,R3,LSL #3 ; SHIFT 3 BITS LEF
+                                                            T BECAUSE WE'LL SEN
+                                                            D OUTPUT VALUE FOR 
+                                                            PE3
+   58 00000056 602B            STR              R3,[R5]     ; STORE THE VALUE T
+                                                            O PE3
+   59 00000058 E7ED            B                loop        ; RETURN TO LOOP
+   60 0000005A         
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   61 0000005A 00 00           ALIGN
+   62 0000005C                 END
+              400FE608 
+              40024400 
+              4002451C 
+              40024020 
+              40024004 
+              40024008 
+              40024010 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4 --fpu=SoftVFP
+ --depend=.\main.d -o.\main.o -I.\RTE\_Lab1 -I"E:\Users\Osman Alperen\AppData\L
+ocal\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include" -I"E:\Users\Osman Alperen\Ap
+pData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123" --predefine="
+__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --predefine="_RTE_ SETA
+ 1" --predefine="TM4C123GH6PM SETA 1" --list=.\main.lst main.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DATA 00000000
+
+Symbol: DATA
+   Definitions
+      At line 12 in file main.s
+   Uses
+      None
+Comment: DATA unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 15 in file main.s
+   Uses
+      None
+Comment: .text unused
+GPIO_Init 00000000
+
+Symbol: GPIO_Init
+   Definitions
+      At line 18 in file main.s
+   Uses
+      At line 42 in file main.s
+Comment: GPIO_Init used once
+Start 00000028
+
+Symbol: Start
+   Definitions
+      At line 41 in file main.s
+   Uses
+      At line 16 in file main.s
+Comment: Start used once
+loop 00000036
+
+Symbol: loop
+   Definitions
+      At line 48 in file main.s
+   Uses
+      At line 59 in file main.s
+Comment: loop used once
+4 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+GPIO_PE0 40024004
+
+Symbol: GPIO_PE0
+   Definitions
+      At line 6 in file main.s
+   Uses
+      At line 44 in file main.s
+Comment: GPIO_PE0 used once
+GPIO_PE1 40024008
+
+Symbol: GPIO_PE1
+   Definitions
+      At line 7 in file main.s
+   Uses
+      At line 45 in file main.s
+Comment: GPIO_PE1 used once
+GPIO_PE2 40024010
+
+Symbol: GPIO_PE2
+   Definitions
+      At line 8 in file main.s
+   Uses
+      At line 46 in file main.s
+Comment: GPIO_PE2 used once
+GPIO_PE3 40024020
+
+Symbol: GPIO_PE3
+   Definitions
+      At line 9 in file main.s
+   Uses
+      At line 43 in file main.s
+Comment: GPIO_PE3 used once
+GPIO_PORTE_DATA_R 400243FC
+
+Symbol: GPIO_PORTE_DATA_R
+   Definitions
+      At line 1 in file main.s
+   Uses
+      None
+Comment: GPIO_PORTE_DATA_R unused
+GPIO_PORTE_DEN_R 4002451C
+
+Symbol: GPIO_PORTE_DEN_R
+   Definitions
+      At line 3 in file main.s
+   Uses
+      At line 34 in file main.s
+Comment: GPIO_PORTE_DEN_R used once
+GPIO_PORTE_DIR_R 40024400
+
+Symbol: GPIO_PORTE_DIR_R
+   Definitions
+      At line 2 in file main.s
+   Uses
+      At line 29 in file main.s
+Comment: GPIO_PORTE_DIR_R used once
+SYSCTL_RCGCGPIO_R 400FE608
+
+Symbol: SYSCTL_RCGCGPIO_R
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+   Definitions
+      At line 4 in file main.s
+   Uses
+      At line 20 in file main.s
+Comment: SYSCTL_RCGCGPIO_R used once
+8 symbols
+349 symbols in table

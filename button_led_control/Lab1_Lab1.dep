@@ -1,0 +1,4 @@
+Dependencies for Project 'Lab1', Target 'Lab1': (DO NOT MODIFY !)
+CompilerVersion: 6130001::V6.13.1::.\ARMCLANG
+F (.\Startup.s)(0x521A01B0)(--cpu Cortex-M4 --fpu=SoftVFP --pd "__EVAL SETA 1" -g-I.\RTE\_Lab1-I"E:\Users\Osman Alperen\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include"-I"E:\Users\Osman Alperen\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123"--pd "__UVISION_VERSION SETA 529"--pd "_RTE_ SETA 1"--pd "TM4C123GH6PM SETA 1"--list .\startup.lst--xref -o .\startup.o--depend .\startup.d)
+F (.\main.s)(0x5EC942F0)(--cpu Cortex-M4 --fpu=SoftVFP --pd "__EVAL SETA 1" -g-I.\RTE\_Lab1-I"E:\Users\Osman Alperen\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include"-I"E:\Users\Osman Alperen\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123"--pd "__UVISION_VERSION SETA 529"--pd "_RTE_ SETA 1"--pd "TM4C123GH6PM SETA 1"--list .\main.lst--xref -o .\main.o--depend .\main.d)
